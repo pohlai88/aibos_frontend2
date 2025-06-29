@@ -3,139 +3,185 @@
 'use client';
 
 import React, { useState } from 'react';
-import { RevisionDrawer } from '../Audit/RevisionDrawer';
-import { useRole } from '@/context/useRole';
-import { JournalTableRow } from './JournalTableRow';
-import { JournalEntry } from '@/hooks/useMockJournalEntries';
+import { useRole } from '@/context/RoleContext';
+import { type JournalEntry } from '@/hooks/useJournalEntries';
+import Link from 'next/link';
 
 export const JournalTable: React.FC<{ 
   entries: JournalEntry[];
-  setEntries?: React.Dispatch<React.SetStateAction<JournalEntry[]>>;
-}> = ({ entries, setEntries }) => {
-  const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
+}> = ({ entries }) => {
   const { role } = useRole();
-  const [sortField, setSortField] = useState<'amount' | 'revisionCount'>('amount');
+  const [sortField, setSortField] = useState<'date' | 'debit' | 'credit' | 'status'>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   const sortedEntries = [...entries].sort((a, b) => {
     const factor = sortDirection === 'asc' ? 1 : -1;
-    if (sortField === 'amount') return (a.amount - b.amount) * factor;
-    if (sortField === 'revisionCount') return (a.revisionCount - b.revisionCount) * factor;
+    if (sortField === 'debit') return (a.debit - b.debit) * factor;
+    if (sortField === 'credit') return (a.credit - b.credit) * factor;
+    if (sortField === 'date') return (new Date(a.date).getTime() - new Date(b.date).getTime()) * factor;
+    if (sortField === 'status') return a.status.localeCompare(b.status) * factor;
     return 0;
   });
 
-  const totalsByStatus = entries.reduce(
-    (acc, entry) => {
-      acc[entry.status] += entry.amount;
-      return acc;
-    },
-    {
-      draft: 0,
-      pending: 0,
-      posted: 0,
-      voided: 0,
+  const handleSort = (field: typeof sortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('desc');
     }
-  );
+  };
 
-  if (!entries.length) {
+  const getStatusBadge = (status: string) => {
+    const statusColors = {
+      draft: 'bg-gray-100 text-gray-800',
+      pending: 'bg-yellow-100 text-yellow-800',
+      posted: 'bg-green-100 text-green-800',
+      voided: 'bg-red-100 text-red-800'
+    };
+    
     return (
-      <div className="p-6 text-sm text-zinc-500 bg-zinc-50 border border-dashed border-zinc-200 rounded">
-        {role === 'auditor' && (
-          <p>
-            You do not have access to any journal entries. Check your assigned roles or reach out to
-            a system administrator.
-          </p>
-        )}
-        {role === 'finance' && (
-          <p>
-            No entries found yet. You can start by creating your first journal item once access is
-            granted.
-          </p>
-        )}
-        {role === 'admin' && <p>Journal is currently empty. System is ready for data population.</p>}
-        {role === 'api-user' && (
-          <p>
-            No entries available. If you&apos;re integrating via API, check your payload triggers or token
-            scopes.
-          </p>
-        )}
+      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}`}>
+        {status}
+      </span>
+    );
+  };
+
+  const formatCurrency = (amount: number) => {
+    return amount === 0 ? '-' : `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+  };
+
+  if (entries.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <div className="text-gray-400 text-4xl mb-4">📒</div>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">No journal entries found</h3>
+        <p className="text-gray-500 mb-4">Get started by creating your first journal entry.</p>
+        <Link
+          href="/journal/new"
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+        >
+          Create Entry
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="rounded border border-zinc-200 bg-white shadow-sm overflow-hidden">
-      <table className="min-w-full text-sm text-left">
-        <thead className="bg-zinc-100 text-zinc-600">
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
           <tr>
             <th
-              className="px-4 py-2 cursor-pointer"
-              onClick={() => {
-                if (sortField === 'amount') {
-                  setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-                } else {
-                  setSortField('amount');
-                  setSortDirection('asc');
-                }
-              }}
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              onClick={() => handleSort('date')}
             >
-              Amount {sortField === 'amount' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}
+              Date
+              {sortField === 'date' && (
+                <span className="ml-1">
+                  {sortDirection === 'asc' ? '↑' : '↓'}
+                </span>
+              )}
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Description
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Account
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Reference
             </th>
             <th
-              className="px-4 py-2 cursor-pointer"
-              onClick={() => {
-                if (sortField === 'revisionCount') {
-                  setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-                } else {
-                  setSortField('revisionCount');
-                  setSortDirection('asc');
-                }
-              }}
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              onClick={() => handleSort('debit')}
             >
-              Audit Info {sortField === 'revisionCount' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}
+              Debit
+              {sortField === 'debit' && (
+                <span className="ml-1">
+                  {sortDirection === 'asc' ? '↑' : '↓'}
+                </span>
+              )}
             </th>
-            <th className="px-4 py-2 text-right">Actions</th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              onClick={() => handleSort('credit')}
+            >
+              Credit
+              {sortField === 'credit' && (
+                <span className="ml-1">
+                  {sortDirection === 'asc' ? '↑' : '↓'}
+                </span>
+              )}
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              onClick={() => handleSort('status')}
+            >
+              Status
+              {sortField === 'status' && (
+                <span className="ml-1">
+                  {sortDirection === 'asc' ? '↑' : '↓'}
+                </span>
+              )}
+            </th>
+            <th scope="col" className="relative px-6 py-3">
+              <span className="sr-only">Actions</span>
+            </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white divide-y divide-gray-200">
           {sortedEntries.map((entry) => (
-            <JournalTableRow
-              key={entry.id}
-              entry={entry}
-              onViewRevisions={(id) => {
-                const foundEntry = entries.find(e => e.id === id);
-                if (foundEntry) setSelectedEntry(foundEntry);
-              }}
-              onShowRevision={(entry) => setSelectedEntry(entry)}
-              setEntries={setEntries || (() => {})}
-            />
+            <tr key={entry.id} className="hover:bg-gray-50">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                {new Date(entry.date).toLocaleDateString()}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-900">
+                <div className="font-medium">{entry.description}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                {entry.account}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {entry.reference || '-'}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono text-right">
+                {formatCurrency(entry.debit)}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono text-right">
+                {formatCurrency(entry.credit)}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                {getStatusBadge(entry.status)}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <div className="flex items-center space-x-2">
+                  {(role === 'admin' || role === 'reviewer') && (
+                    <Link
+                      href={`/journal/${entry.id}`}
+                      className="text-blue-600 hover:text-blue-900 text-sm"
+                    >
+                      View
+                    </Link>
+                  )}
+                  {entry.status === 'draft' && (role === 'admin' || role === 'engineer') && (
+                    <Link
+                      href={`/journal/${entry.id}/edit`}
+                      className="text-green-600 hover:text-green-900 text-sm"
+                    >
+                      Edit
+                    </Link>
+                  )}
+                </div>
+              </td>
+            </tr>
           ))}
         </tbody>
-        <tfoot className="border-t bg-zinc-50 text-sm text-zinc-600">
-          <tr>
-            <td colSpan={2} className="px-4 py-2 text-right font-medium">
-              Totals:
-            </td>
-            <td className="px-4 py-2">
-              Posted: {totalsByStatus.posted.toFixed(2)}
-              <br />
-              Pending: {totalsByStatus.pending.toFixed(2)}
-              <br />
-              Draft: {totalsByStatus.draft.toFixed(2)}
-              <br />
-              Voided: {totalsByStatus.voided.toFixed(2)}
-            </td>
-            <td />
-          </tr>
-        </tfoot>
       </table>
-      {selectedEntry && (
-        <RevisionDrawer
-          entry={selectedEntry}
-          onClose={() => setSelectedEntry(null)}
-          setEntries={setEntries || (() => {})}
-        />
-      )}
     </div>
   );
 };

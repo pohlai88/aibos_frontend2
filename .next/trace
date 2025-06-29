@@ -1,2 +1,5 @@
-[{"name":"next-dev","duration":1461455,"timestamp":78826257448,"id":1,"tags":{},"startTime":1751198161077,"traceId":"a299b8adf96ae979"}]
-[{"name":"next-dev","duration":1448932,"timestamp":78908667147,"id":1,"tags":{},"startTime":1751198243474,"traceId":"6e5f930ceebbf75b"}]
+[{"name":"next-dev","duration":792895,"timestamp":102553346332,"id":1,"tags":{},"startTime":1751221888326,"traceId":"fd152177204291aa"}]
+[{"name":"next-dev","duration":739366,"timestamp":102616286597,"id":1,"tags":{},"startTime":1751221951261,"traceId":"47d0c699dcad4a1d"}]
+[{"name":"next-dev","duration":1419717,"timestamp":102644322269,"id":1,"tags":{},"startTime":1751221979292,"traceId":"a7c9c7e283181222"}]
+[{"name":"next-dev","duration":730753,"timestamp":103367253988,"id":1,"tags":{},"startTime":1751222702235,"traceId":"14ee0b2c49960ebc"}]
+[{"name":"next-dev","duration":937922,"timestamp":103413769778,"id":1,"tags":{},"startTime":1751222748738,"traceId":"9601b01b33122b71"}]
