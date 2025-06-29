@@ -2,11 +2,17 @@
 
 'use client';
 
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 export type SessionOrigin = 'web' | 'api' | 'automated' | 'mobile';
 
-const SessionOriginContext = createContext<SessionOrigin>('web');
+const SessionOriginContext = createContext<{
+  origin: SessionOrigin;
+  setOrigin: React.Dispatch<React.SetStateAction<SessionOrigin>>;
+}>({
+  origin: 'web',
+  setOrigin: () => {},
+});
 
 export const SessionOriginProvider = ({
   children,
@@ -14,10 +20,14 @@ export const SessionOriginProvider = ({
 }: {
   children: React.ReactNode;
   value?: SessionOrigin;
-}) => (
-  <SessionOriginContext.Provider value={value}>
-    {children}
-  </SessionOriginContext.Provider>
-);
+}) => {
+  const [origin, setOrigin] = useState<SessionOrigin>(value);
+
+  return (
+    <SessionOriginContext.Provider value={{ origin, setOrigin }}>
+      {children}
+    </SessionOriginContext.Provider>
+  );
+};
 
 export const useSessionOrigin = () => useContext(SessionOriginContext);

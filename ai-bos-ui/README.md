@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI-BOS™ Accounting Ledger UI
 
-## Getting Started
+AI-BOS™ is a governance-grade, audit-aware SaaS accounting ledger UI built with Next.js, TypeScript, TailwindCSS, and strict linting. It features modular, role-based, and audit-focused capabilities designed for compliance, operational clarity, and extensibility.
 
-First, run the development server:
+## Features
+
+### Core Features
+- **Modular UI Components:** Includes `JournalTable`, `JournalTableRow`, `JournalRowActions`, `EntryStatusBadge`, and more.
+- **Role-Based Navigation:** Role-aware views with access control and policy kernel.
+- **Audit Banners:** Global audit cues and revision tracking.
+- **Dark Mode:** User-friendly dark mode toggle.
+- **Client-Side Sorting & Filtering:** Enhanced journal state management with local persistence.
+
+### Audit & Revision
+- **Audit Trail:** Field-level diffs, reversion, and revision tracking.
+- **Revision Drawer:** Detailed views of changes and audit events.
+
+### Session & Dev Tools
+- **Session Snapshot Export/Import:** Save and load session states.
+- **Dev Tools:** Includes `DevPresetSwitcher`, `DevPolicyBanner`, and `DevSnapshotLoader`.
+
+### Copilot Assist & Suggestions
+- **Copilot Assist Mode:** Inline suggestions with `CopilotFlag` and `InsightLogPanel`.
+- **Global Flag State:** Resolve/ignore actions with localStorage persistence.
+
+### Review & Oversight
+- **Feedback Dialog:** Human feedback integration.
+- **Review Status:** Highlight and filter “Needs Review” entries.
+- **Bulk Triage Panel:** Batch triage of Copilot flags.
+- **Metrics & Scoring:** Reviewer metrics and aggregate stats with `computeCopilotScore` utility.
+
+## Advanced Features
+
+### Rule Management
+- **Declarative Rules:** JSON-based no-code authoring.
+- **AI-Driven Suggestions:** Copilot heuristic for rule creation.
+- **Rule Lifecycle:** Version history, grouping, tagging, and ownership.
+
+### Export & Backup
+- **Export Intelligence:** Export rules, flags, and feedback as JSON/CSV.
+
+### Timeline & Evolution
+- **Ledger Timeline:** Chronological activity stream for rules, flags, and feedback.
+
+### Real-Time Alerts
+- **Uncovered Entries:** Highlight entries not covered by any rule.
+
+## Development
+
+### Getting Started
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Components:** Modular UI components for journal entries, assist mode, and review.
+- **Context:** Centralized state management for roles, session origin, and Copilot flags.
+- **Utilities:** Helper functions for session snapshots, CSV export, and scoring.
 
-## Learn More
+### Deployment
 
-To learn more about Next.js, take a look at the following resources:
+Deploy on [Vercel](https://vercel.com) for production-ready hosting.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Next Steps
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Final user-driven testing and QA.
+- Optional enhancements: anomaly detection, multi-entity support, plugin APIs, compliance dashboards.

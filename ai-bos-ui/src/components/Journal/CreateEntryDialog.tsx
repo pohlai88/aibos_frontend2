@@ -23,6 +23,14 @@ export const CreateEntryDialog: React.FC<Props> = ({ setEntries }) => {
       source: 'web',
       revisionCount: 0,
       status: 'draft',
+      auditTrail: [
+        {
+          type: 'create',
+          timestamp: new Date().toISOString(),
+          actor: 'current-user',
+          note: 'Initial entry created via UI',
+        },
+      ],
     };
     setEntries((prev) => [...prev, newEntry]);
     setOpen(false);

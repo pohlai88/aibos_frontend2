@@ -26,3 +26,13 @@ export function generateCSV(entries: JournalEntry[]): string {
   const csv = [headers, ...rows].map((row) => row.join(',')).join('\n');
   return csv;
 }
+
+export function downloadFile(filename: string, content: string) {
+  const blob = new Blob([content], { type: 'text/csv' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}

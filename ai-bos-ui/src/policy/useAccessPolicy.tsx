@@ -9,5 +9,8 @@ export function useAccessPolicy() {
   const origin = useSessionOrigin();
   const policy = computeAccessPolicy(role, origin);
 
-  return policy;
+  return {
+    ...policy,
+    'restore:revision': role === 'super-admin',
+  };
 }
