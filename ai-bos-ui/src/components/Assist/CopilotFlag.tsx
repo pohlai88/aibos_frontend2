@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useFlagContext } from '@/context/CopilotFlagContext';
+import { useFlagContext, CopilotFlag as CopilotFlagType } from '@/context/CopilotFlagContext';
 
 export const CopilotFlag = ({
   flag,
 }: {
-  flag: CopilotFlag;
+  flag: CopilotFlagType;
 }) => {
   const [visible, setVisible] = useState(true);
   const { updateFlagStatus } = useFlagContext();

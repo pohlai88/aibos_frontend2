@@ -16,7 +16,7 @@ export const BulkTriagePanel = () => {
     <div className="fixed bottom-4 left-4 w-[380px] max-h-[80vh] overflow-y-auto bg-white border shadow-lg rounded p-4 z-50 text-xs space-y-3">
       <div className="flex justify-between items-center">
         <h2 className="font-semibold text-sm">🧹 Copilot Triage</h2>
-        <select value={filter} onChange={(e) => setFilter(e.target.value as any)}>
+        <select value={filter} onChange={(e) => setFilter(e.target.value as 'open' | 'ignored' | 'all')}>
           <option value="open">Open</option>
           <option value="ignored">Ignored</option>
           <option value="all">All</option>
@@ -47,7 +47,7 @@ export const BulkTriagePanel = () => {
             </div>
           </div>
         ))
-      }
+      )}
     </div>
   );
 };

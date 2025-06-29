@@ -12,11 +12,10 @@ type EntryStatus = 'pending' | 'posted' | 'voided'; // Define the EntryStatus ty
 type Props = {
   entryId: string;
   onViewRevisions: (id: string) => void;
-  onStatusChange: (id: string, status: EntryStatus) => void;
   setEntries: React.Dispatch<React.SetStateAction<JournalEntry[]>>;
 };
 
-export const JournalRowActions: React.FC<Props> = ({ entryId, onViewRevisions, onStatusChange, setEntries }) => {
+export const JournalRowActions: React.FC<Props> = ({ entryId, onViewRevisions, setEntries }) => {
   const policy = useAccessPolicy();
   const [showFeedback, setShowFeedback] = useState<JournalEntry | null>(null);
 
@@ -72,10 +71,7 @@ export const JournalRowActions: React.FC<Props> = ({ entryId, onViewRevisions, o
       )}
       {policy['edit:journal'] && (
         <button
-          onClick={() => {
-            onStatusChange(entryId, 'pending');
-            updateEntryStatus(entryId, 'pending');
-          }}
+          onClick={() => updateEntryStatus(entryId, 'pending')}
           className="text-xs text-yellow-600 hover:underline"
         >
           Submit for Approval
@@ -83,10 +79,7 @@ export const JournalRowActions: React.FC<Props> = ({ entryId, onViewRevisions, o
       )}
       {policy['access:admin-panel'] && (
         <button
-          onClick={() => {
-            onStatusChange(entryId, 'posted');
-            updateEntryStatus(entryId, 'posted');
-          }}
+          onClick={() => updateEntryStatus(entryId, 'posted')}
           className="text-xs text-green-600 hover:underline"
         >
           Approve
@@ -94,10 +87,7 @@ export const JournalRowActions: React.FC<Props> = ({ entryId, onViewRevisions, o
       )}
       {policy['override:auditLock'] && (
         <button
-          onClick={() => {
-            onStatusChange(entryId, 'voided');
-            updateEntryStatus(entryId, 'voided');
-          }}
+          onClick={() => updateEntryStatus(entryId, 'voided')}
           className="text-xs text-red-600 hover:underline"
         >
           Void

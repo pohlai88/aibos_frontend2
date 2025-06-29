@@ -3,22 +3,20 @@
 'use client';
 
 import { useState } from 'react';
-import { importSnapshot } from '@/utils/sessionSnapshot';
+import { importSnapshot, SnapshotPayload } from '@/utils/sessionSnapshot';
 import { downloadFile } from '@/utils/exportCSV';
 import { DeclarativeRule } from '@/plugins/evaluateDeclarativeRules';
 import { CopilotFlag } from '@/context/CopilotFlagContext';
 import { JournalEntry } from '@/hooks/useMockJournalEntries';
-
-// Fix type for SnapshotPayload
-export type SnapshotPayload = any;
 
 export const DevSnapshotLoader = ({
   onLoad,
 }: {
   onLoad: (snapshot: SnapshotPayload) => void;
 }) => {
-  if (process.env.NODE_ENV !== 'development') return null;
   const [filename, setFilename] = useState<string | null>(null);
+
+  if (process.env.NODE_ENV !== 'development') return null;
 
   return (
     <div className="fixed bottom-14 right-4 z-50">
@@ -75,7 +73,7 @@ export const DevExportPanel = ({ rules, flags, entries }: {
   );
 };
 
-function convertToCSV<T extends Record<string, any>>(items: T[]): string {
+function convertToCSV<T extends Record<string, unknown>>(items: T[]): string {
   if (items.length === 0) return '';
   const headers = Object.keys(items[0]);
   const rows = items.map(row => headers.map(h => JSON.stringify(row[h] ?? '')).join(','));

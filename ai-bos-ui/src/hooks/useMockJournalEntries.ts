@@ -11,6 +11,7 @@ export type AuditEvent = {
   timestamp: string;
   actor: string;
   note?: string;
+  delta?: Record<string, { from: any; to: any }>;
 };
 
 export type Revision = {

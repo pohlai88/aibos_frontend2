@@ -2,12 +2,13 @@
 
 import { useRole } from '@/context/useRole';
 import { useSessionOrigin } from '@/context/SessionOriginContext';
+import { RoleType, SessionOrigin } from '@/policy/types';
 
 export const DevPresetSwitcher = () => {
-  if (process.env.NODE_ENV !== 'development') return null;
-
   const { role, setRole } = useRole();
   const { origin, setOrigin } = useSessionOrigin();
+
+  if (process.env.NODE_ENV !== 'development') return null;
 
   return (
     <div className="fixed top-4 right-4 z-50 bg-zinc-50 border border-zinc-200 p-3 rounded shadow text-xs flex gap-4 items-center">
@@ -15,7 +16,7 @@ export const DevPresetSwitcher = () => {
         <label className="block font-medium mb-1">Role:</label>
         <select
           value={role}
-          onChange={(e) => setRole(e.target.value)}
+          onChange={(e) => setRole(e.target.value as RoleType)}
           className="border px-2 py-1 text-xs rounded"
         >
           <option value="finance">finance</option>
@@ -30,7 +31,7 @@ export const DevPresetSwitcher = () => {
         <label className="block font-medium mb-1">Origin:</label>
         <select
           value={origin}
-          onChange={(e) => setOrigin(e.target.value)}
+          onChange={(e) => setOrigin(e.target.value as SessionOrigin)}
           className="border px-2 py-1 text-xs rounded"
         >
           <option value="web">web</option>

@@ -8,11 +8,11 @@ import { useAccessPolicy } from '@/policy/useAccessPolicy';
 import { createSnapshot } from '@/utils/sessionSnapshot';
 
 export const DevPolicyBanner = () => {
-  if (process.env.NODE_ENV !== 'development') return null;
-
-  const role = useRole();
-  const origin = useSessionOrigin();
+  const { role } = useRole();
+  const { origin } = useSessionOrigin();
   const policy = useAccessPolicy();
+
+  if (process.env.NODE_ENV !== 'development') return null;
 
   function handleCreateSnapshot({ role, origin, policy }: { role: string; origin: string; policy: any }) {
     const payload = createSnapshot({

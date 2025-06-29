@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useFlagContext } from '@/context/CopilotFlagContext';
 import { CopilotFlag } from '@/context/CopilotFlagContext';
 import { JournalEntry } from '@/hooks/useMockJournalEntries';
+import { DeclarativeRule } from '@/plugins/evaluateDeclarativeRules';
 
 export const InsightLogPanel = ({ flags, entries }: { flags: CopilotFlag[]; entries: JournalEntry[] }) => {
   const [open, setOpen] = useState(false);
@@ -128,8 +128,7 @@ function mapEntryToRules(rules: DeclarativeRule[], entries: JournalEntry[]): Rec
   for (const rule of rules.filter(r => r.status === 'active')) {
     for (const entry of entries) {
       const match = applyCondition(entry[rule.field], rule.condition, rule.value);
-      const matchesStatus = !rule.appliesToStatus || rule.appliesToStatus.includes(entry.status);
-      if (match && matchesStatus) {
+      if (match) {
         if (!coverageMap[entry.id]) coverageMap[entry.id] = [];
         coverageMap[entry.id].push(rule.id);
       }

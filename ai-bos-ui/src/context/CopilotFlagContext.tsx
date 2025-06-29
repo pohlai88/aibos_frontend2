@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useContext, useEffect, useState } from 'react';
 
 export type CopilotFlag = {
@@ -27,7 +29,7 @@ export const FlagProvider = ({ children }: { children: React.ReactNode }) => {
     if (stored) {
       try {
         setFlags(JSON.parse(stored));
-      } catch (e) {
+      } catch {
         console.warn('Invalid flag data');
       }
     }

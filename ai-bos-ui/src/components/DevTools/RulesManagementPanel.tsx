@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { DeclarativeRule, evaluateDeclarativeRules } from '@/plugins/evaluateDeclarativeRules';
 import { useLocalJournalEntries } from '@/hooks/useMockJournalEntries';
@@ -20,14 +22,15 @@ export const RulesManagementPanel: React.FC<{ userRules: DeclarativeRule[]; setU
     setCopilotFlags(newFlags);
   };
 
-  const updateRule = (id: string, updatedRule: Partial<DeclarativeRule>) => {
-    setUserRules((prev) =>
-      prev.map((rule) => (rule.id === id ? { ...rule, ...updatedRule } : rule))
-    );
-    const activeRules = userRules.filter((r) => r.status === 'active');
-    const newFlags = evaluateDeclarativeRules(activeRules, entries);
-    setCopilotFlags(newFlags);
-  };
+  // TODO: Use this function for rule updates
+  // const updateRule = (id: string, updatedRule: Partial<DeclarativeRule>) => {
+  //   setUserRules((prev) =>
+  //     prev.map((rule) => (rule.id === id ? { ...rule, ...updatedRule } : rule))
+  //   );
+  //   const activeRules = userRules.filter((r) => r.status === 'active');
+  //   const newFlags = evaluateDeclarativeRules(activeRules, entries);
+  //   setCopilotFlags(newFlags);
+  // };
 
   const groupedRules = groupBy(userRules, (r: DeclarativeRule) => r.domain);
 
@@ -41,8 +44,7 @@ export const RulesManagementPanel: React.FC<{ userRules: DeclarativeRule[]; setU
             <div key={rule.id} className="border rounded p-3 text-xs space-y-1 bg-white shadow-sm">
               <div className="font-semibold">{rule.message}</div>
               <div className="text-zinc-500">
-                IF <b>{rule.field}</b> <i>{rule.condition}</i> <b>{String(rule.value)}</b>{' '}
-                {rule.appliesToStatus?.length && ` (statuses: ${rule.appliesToStatus.join(', ')})`}
+                IF <b>{rule.field}</b> <i>{rule.condition}</i> <b>{String(rule.value)}</b>
               </div>
               <div className="text-[10px] text-zinc-500 italic">
                 Owner: {rule.owner} · Created: {new Date(rule.createdAt).toLocaleDateString()}

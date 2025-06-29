@@ -1,4 +1,4 @@
-import { JournalEntry, EntryStatus } from '@/hooks/useMockJournalEntries';
+import { JournalEntry } from '@/hooks/useMockJournalEntries';
 import { CopilotFlag } from '@/context/CopilotFlagContext';
 
 export type RuleHistory = {
@@ -31,7 +31,6 @@ export function evaluateDeclarativeRules(
   return rules.flatMap((rule) =>
     entries
       .filter((e) =>
-        (!rule.appliesToStatus || rule.appliesToStatus.includes(e.status)) &&
         applyCondition(e[rule.field], rule.condition, rule.value)
       )
       .map((e) => ({

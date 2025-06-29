@@ -1,9 +1,11 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { useSessionOrigin } from '@/context/SessionOriginContext';
 
 export function GlobalAuditBanner() {
   const [auditMessages, setAuditMessages] = useState<string[]>([]);
-  const origin = useSessionOrigin();
+  const { origin } = useSessionOrigin();
 
   useEffect(() => {
     // Simulate real-time audit notifications

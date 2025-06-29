@@ -2,8 +2,6 @@
 
 'use client';
 
-import { useState } from 'react';
-
 type RevisionDrawerProps = {
   isOpen: boolean;
   onClose: () => void;

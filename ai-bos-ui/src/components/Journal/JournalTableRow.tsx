@@ -2,20 +2,18 @@
 
 'use client';
 
-import { JournalEntry, EntryStatus } from '@/hooks/useMockJournalEntries';
+import { JournalEntry } from '@/hooks/useMockJournalEntries';
 import { AuditCue } from '@/components/UI/AuditCue';
 import { RLSBadge } from '@/components/UI/RLSBadge';
 import { JournalRowActions } from './JournalRowActions';
 import { EntryStatusBadge } from '@/components/UI/EntryStatusBadge';
 import { ReviewStatusBadge } from '@/components/UI/ReviewStatusBadge';
-import { CopilotFlag } from '@/components/Assist/CopilotFlag';
 import { useAssistMode } from '@/context/AssistModeContext';
 import { useFlagContext } from '@/context/CopilotFlagContext';
 
 type Props = {
   entry: JournalEntry;
   onViewRevisions: (id: string) => void;
-  onStatusChange: (id: string, status: EntryStatus) => void;
   onShowRevision: (entry: JournalEntry) => void;
   setEntries: React.Dispatch<React.SetStateAction<JournalEntry[]>>;
 };
@@ -23,7 +21,6 @@ type Props = {
 export const JournalTableRow: React.FC<Props> = ({
   entry,
   onViewRevisions,
-  onStatusChange,
   onShowRevision,
   setEntries,
 }) => {
@@ -38,9 +35,9 @@ export const JournalTableRow: React.FC<Props> = ({
 
   const reviewStatus = getReviewStatus(entry);
   const { enabled } = useAssistMode();
+  const { flags: copilotFlags } = useFlagContext();
 
   function needsReview(entry: JournalEntry): boolean {
-    const { flags: copilotFlags } = useFlagContext();
     const hasAI = copilotFlags.some((f) => f.entryId === entry.id && f.status === 'open');
     const hasFeedback = (entry.feedback || []).length > 0;
     return hasAI && hasFeedback;
@@ -57,11 +54,6 @@ export const JournalTableRow: React.FC<Props> = ({
           </span>
         )}
         {entry.description}
-        {!coverageMap[entry.id] && ['draft', 'pending'].includes(entry.status) && (
-          <span className="text-xs text-red-700 bg-red-100 px-2 py-0.5 rounded ml-2">
-            ⚠️ Not Evaluated by Any Rule
-          </span>
-        )}
       </td>
       <td className="px-4 py-2">{entry.amount.toFixed(2)}</td>
       <td className="px-4 py-2">
@@ -76,7 +68,6 @@ export const JournalTableRow: React.FC<Props> = ({
         <JournalRowActions
           entryId={entry.id}
           onViewRevisions={onViewRevisions}
-          onStatusChange={onStatusChange}
           setEntries={setEntries}
         />
         {entry.revisions && entry.revisions.length > 0 && (
@@ -88,14 +79,15 @@ export const JournalTableRow: React.FC<Props> = ({
           </button>
         )}
         {enabled && entry.status === 'voided' && !entry.auditTrail.some(e => e.note) && (
-          <CopilotFlag
-            message="This voided entry lacks a reason note. Recommend adding one for audit clarity."
-            action={
-              <button className="underline text-yellow-700 text-xs">
+          <div className="flex items-start gap-2 bg-yellow-50 border border-yellow-200 text-yellow-800 text-xs px-3 py-2 rounded relative mt-2">
+            <span>📌</span>
+            <div className="flex-1">
+              <p>This voided entry lacks a reason note. Recommend adding one for audit clarity.</p>
+              <button className="underline text-yellow-700 text-xs mt-1">
                 ✍️ Add Reason
               </button>
-            }
-          />
+            </div>
+          </div>
         )}
       </td>
     </tr>

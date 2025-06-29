@@ -6,7 +6,7 @@ import { useCopilotFlags } from '@/context/CopilotFlagContext';
 export const CustomRulePanel: React.FC = () => {
   const [json, setJson] = useState('');
   const [entries] = useLocalJournalEntries();
-  const { flags, setFlags } = useCopilotFlags();
+  const { setFlags } = useCopilotFlags();
 
   const handleRunRules = () => {
     try {

@@ -1,3 +1,7 @@
+"use client";
+
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { detectEmergentPatterns, SuggestedRule } from '@/plugins/CopilotHeuristic';
 import { useLocalJournalEntries } from '@/hooks/useMockJournalEntries';
@@ -23,7 +27,13 @@ export const SuggestedRulesPanel: React.FC = () => {
       condition: extractCondition(suggestion.condition),
       value: extractValue(suggestion.condition),
       message: suggestion.recommendedMessage,
-      appliesToStatus: ['draft', 'pending'],
+      domain: 'audit',
+      tags: [],
+      owner: 'current-user',
+      createdAt: new Date().toISOString(),
+      status: 'active',
+      version: 1,
+      history: [],
     };
 
     setUserRules((prev) => [...prev, newRule]);

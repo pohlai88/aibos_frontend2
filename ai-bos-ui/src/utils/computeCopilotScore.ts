@@ -3,7 +3,7 @@ import { JournalEntry } from '@/hooks/useMockJournalEntries';
 
 export function computeCopilotScore(flags: CopilotFlag[], entries: JournalEntry[]): number {
   let score = 0;
-  let max = flags.length * 1; // each flag worth 1 point
+  const max = flags.length * 1; // each flag worth 1 point
 
   for (const flag of flags) {
     if (flag.status === 'resolved') score += 1;

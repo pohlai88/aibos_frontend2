@@ -3,17 +3,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AuditCue } from '@/components/UI/AuditCue';
-import { RLSBadge } from '@/components/UI/RLSBadge';
-import { RevisionDrawer } from './RevisionDrawer';
+import { RevisionDrawer } from '../Audit/RevisionDrawer';
 import { useRole } from '@/context/useRole';
-import { JournalRowActions } from './JournalRowActions';
 import { JournalTableRow } from './JournalTableRow';
-import { JournalEntry, EntryStatus } from '@/hooks/useMockJournalEntries';
+import { JournalEntry } from '@/hooks/useMockJournalEntries';
 
-export const JournalTable: React.FC<{ entries: JournalEntry[] }> = ({ entries }) => {
-  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
-  const role = useRole();
+export const JournalTable: React.FC<{ 
+  entries: JournalEntry[];
+  setEntries?: React.Dispatch<React.SetStateAction<JournalEntry[]>>;
+}> = ({ entries, setEntries }) => {
+  const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
+  const { role } = useRole();
   const [sortField, setSortField] = useState<'amount' | 'revisionCount'>('amount');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
@@ -23,13 +23,6 @@ export const JournalTable: React.FC<{ entries: JournalEntry[] }> = ({ entries })
     if (sortField === 'revisionCount') return (a.revisionCount - b.revisionCount) * factor;
     return 0;
   });
-
-  const updateEntryStatus = (id: string, status: EntryStatus) => {
-    const updatedEntries = entries.map((entry) =>
-      entry.id === id ? { ...entry, status, revisionCount: entry.revisionCount + 1 } : entry
-    );
-    // Handle updated entries externally
-  };
 
   const totalsByStatus = entries.reduce(
     (acc, entry) => {
@@ -62,7 +55,7 @@ export const JournalTable: React.FC<{ entries: JournalEntry[] }> = ({ entries })
         {role === 'admin' && <p>Journal is currently empty. System is ready for data population.</p>}
         {role === 'api-user' && (
           <p>
-            No entries available. If you're integrating via API, check your payload triggers or token
+            No entries available. If you&apos;re integrating via API, check your payload triggers or token
             scopes.
           </p>
         )}
@@ -109,8 +102,12 @@ export const JournalTable: React.FC<{ entries: JournalEntry[] }> = ({ entries })
             <JournalTableRow
               key={entry.id}
               entry={entry}
-              onViewRevisions={(id) => setSelectedEntryId(id)}
-              onStatusChange={updateEntryStatus}
+              onViewRevisions={(id) => {
+                const foundEntry = entries.find(e => e.id === id);
+                if (foundEntry) setSelectedEntry(foundEntry);
+              }}
+              onShowRevision={(entry) => setSelectedEntry(entry)}
+              setEntries={setEntries || (() => {})}
             />
           ))}
         </tbody>
@@ -132,11 +129,11 @@ export const JournalTable: React.FC<{ entries: JournalEntry[] }> = ({ entries })
           </tr>
         </tfoot>
       </table>
-      {selectedEntryId && (
+      {selectedEntry && (
         <RevisionDrawer
-          isOpen={!!selectedEntryId}
-          entryId={selectedEntryId}
-          onClose={() => setSelectedEntryId(null)}
+          entry={selectedEntry}
+          onClose={() => setSelectedEntry(null)}
+          setEntries={setEntries || (() => {})}
         />
       )}
     </div>

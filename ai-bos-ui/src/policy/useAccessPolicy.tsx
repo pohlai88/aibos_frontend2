@@ -5,8 +5,8 @@ import { useSessionOrigin } from '@/context/SessionOriginContext';
 import { computeAccessPolicy } from './accessKernel';
 
 export function useAccessPolicy() {
-  const role = useRole();
-  const origin = useSessionOrigin();
+  const { role } = useRole();
+  const { origin } = useSessionOrigin();
   const policy = computeAccessPolicy(role, origin);
 
   return {
